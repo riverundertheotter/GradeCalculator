@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
@@ -14,7 +15,7 @@ public class GradeCalculator {
         GradeCalculator g = new GradeCalculator();
         Scanner sc = new Scanner(System.in);
         while(true) {
-            System.out.println("Welcome to the Grade Calculator. How can I help you?\n1. Find new grade\n2. View existing grades\n3. Return to menu\n0. Quit");
+            System.out.println("Welcome to the Grade Calculator. How can I help you?\n1. Find new grade\n2. View existing grades\n0. Quit");
             int response = sc.nextInt();
 
             switch (response) {
@@ -28,8 +29,6 @@ public class GradeCalculator {
                     System.out.println("\n");
                     g.viewExistingGrade(fileName);
                     continue;
-                case 3:
-                    continue;
 
                 case 0:
                     return;
@@ -41,9 +40,9 @@ public class GradeCalculator {
         class AssignmentType {
             public String assignmentName;
             public float weight;
-            public ArrayList<Float> grades = new ArrayList<Float>();
+            public ArrayList<Float> grades = new ArrayList<>();
         }
-        System.out.println("What is the name of your class?");
+        System.out.println("What is the name of your class? (no spaces)");
         String className = sc.next();
         File classFile = new File(className + ".txt");
         FileWriter writer = new FileWriter(classFile, true);
@@ -60,13 +59,15 @@ public class GradeCalculator {
                 break;
             }
             System.out.println("Enter the total weight (in decimal) of " + currentAssignment.assignmentName);
-            currentAssignment.weight = sc.nextFloat();
+            try {
+                currentAssignment.weight = sc.nextFloat();
+            } catch(InputMismatchException e) {
+                System.out.println("You entered the wrong type of data. Please enter a decimal.");
+            }
             System.out.println("Enter individual grade for each " + currentAssignment.assignmentName + " and hit enter.\nType negative value to finish inputting.");
-            boolean inputtingGrades = true;
-            while(inputtingGrades) {
+            while(true) {
                 float grade = sc.nextFloat();
                 if (grade < 0) {
-                    inputtingGrades = false;
                     break;
                 }
                 currentAssignment.grades.add(grade);
